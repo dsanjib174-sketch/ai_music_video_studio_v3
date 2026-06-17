@@ -2,3 +2,7 @@ Flask==3.0.3
 Werkzeug==3.0.3
 gunicorn==23.0.0
 Pillow==10.4.0
+moviepy==1.0.3
+imageio==2.37.0
+imageio-ffmpeg==0.5.1
+numpy==2.0.1
