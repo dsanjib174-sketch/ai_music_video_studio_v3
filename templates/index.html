@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Music Video Studio V3</title>
+  <style>
+    *{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#0b1020;color:#fff} .wrap{max-width:1200px;margin:auto;padding:28px} .hero{background:linear-gradient(135deg,#172554,#581c87,#111827);border-radius:24px;padding:32px;box-shadow:0 20px 70px rgba(0,0,0,.35)} h1{margin:0 0 10px;font-size:34px} .sub{color:#d1d5db;margin-bottom:22px}.grid{display:grid;grid-template-columns:430px 1fr;gap:22px}.card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);border-radius:20px;padding:20px;margin-top:20px}.field{margin-bottom:16px} label{display:block;font-weight:700;margin-bottom:8px;color:#e5e7eb} input,select{width:100%;padding:12px;border-radius:12px;border:1px solid #334155;background:#111827;color:#fff}.checks{display:grid;grid-template-columns:1fr 1fr;gap:10px}.check{background:#111827;padding:10px;border-radius:12px;border:1px solid #334155} .check input{width:auto;margin-right:6px}.btn{width:100%;padding:14px 18px;border:none;border-radius:14px;background:linear-gradient(90deg,#22c55e,#06b6d4);font-weight:800;font-size:16px;cursor:pointer;color:#06111f}.btn:disabled{opacity:.6;cursor:not-allowed}.preview{min-height:420px;background:#020617;border-radius:18px;border:1px solid #334155;display:flex;align-items:center;justify-content:center;overflow:hidden}.placeholder{text-align:center;color:#94a3b8;padding:30px} video{width:100%;max-height:520px}.progress{height:12px;background:#111827;border-radius:99px;overflow:hidden;margin-top:14px}.bar{width:0%;height:100%;background:linear-gradient(90deg,#22c55e,#06b6d4);transition:.3s}.status{margin-top:12px;color:#cbd5e1}.pill{display:inline-block;padding:8px 11px;background:#111827;border:1px solid #334155;border-radius:999px;margin:5px;color:#dbeafe}.download{display:none;margin-top:14px;text-align:center;text-decoration:none;color:#06111f;background:#facc15;padding:13px;border-radius:13px;font-weight:800}.note{font-size:13px;color:#cbd5e1;line-height:1.5}@media(max-width:900px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1>AI Music Video Studio V3</h1>
+    <div class="sub">Real MP4 generator from your song and photos. Local demo with cinematic slideshow output.</div>
+    <div class="grid">
+      <div>
+        <form id="videoForm" class="card">
+          <div class="field"><label>Upload Song MP3/WAV</label><input type="file" name="song" accept="audio/*" required></div>
+          <div class="field"><label>Upload Hero Photos</label><input type="file" name="photos" accept="image/*" multiple required></div>
+          <div class="field"><label>Video Style</label><select name="style"><option>Cinematic Romantic</option><option>Luxury Travel</option><option>Sad Emotional</option><option>Bollywood Dream</option><option>Bengali Romantic</option></select></div>
+          <div class="field"><label>Output Quality</label><select name="quality"><option value="1080p">1080p Fast Preview</option><option value="4K">4K Ultra HD</option></select></div>
+          <div class="field"><label>Foreign Locations</label><div class="checks">
+            <label class="check"><input type="checkbox" name="locations" value="New York" checked>New York</label>
+            <label class="check"><input type="checkbox" name="locations" value="Paris" checked>Paris</label>
+            <label class="check"><input type="checkbox" name="locations" value="Switzerland" checked>Switzerland</label>
+            <label class="check"><input type="checkbox" name="locations" value="Dubai" checked>Dubai</label>
+            <label class="check"><input type="checkbox" name="locations" value="Venice">Venice</label>
+            <label class="check"><input type="checkbox" name="locations" value="Maldives">Maldives</label>
+            <label class="check"><input type="checkbox" name="locations" value="Santorini">Santorini</label>
+          </div></div>
+          <button class="btn" id="generateBtn" type="submit">Generate Real MP4 Video</button>
+          <div class="progress"><div class="bar" id="bar"></div></div>
+          <div class="status" id="status">Ready</div>
+          <a class="download" id="downloadLink" href="#">Download MP4</a>
+        </form>
+        <div class="card note"><b>Important:</b> This V3 creates a real MP4 from your uploaded photos and song. For exact face motion, AI actress, and lip-sync, the final version must connect with Kling, Runway, Hailuo, or Google Veo API.</div>
+      </div>
+      <div>
+        <div class="card">
+          <h2>Output Preview</h2>
+          <div class="preview" id="preview"><div class="placeholder">Generated video will play here after processing.</div></div>
+          <div id="meta"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const form=document.getElementById('videoForm');const btn=document.getElementById('generateBtn');const statusEl=document.getElementById('status');const bar=document.getElementById('bar');const preview=document.getElementById('preview');const download=document.getElementById('downloadLink');const meta=document.getElementById('meta');
+let timer;
+form.addEventListener('submit',async(e)=>{e.preventDefault();btn.disabled=true;download.style.display='none';preview.innerHTML='<div class="placeholder">Processing video... please wait. 4K may take more time.</div>';statusEl.textContent='Uploading files and creating scenes...';bar.style.width='8%';let p=8;timer=setInterval(()=>{p=Math.min(88,p+Math.random()*6);bar.style.width=p+'%';},800);
+try{const fd=new FormData(form);const res=await fetch('/generate',{method:'POST',body:fd});const data=await res.json();clearInterval(timer);if(!data.ok)throw new Error(data.error||'Generation failed');bar.style.width='100%';statusEl.textContent='Video generated successfully.';preview.innerHTML=`<video controls autoplay src="${data.video_url}"></video>`;download.href=data.download_url;download.style.display='block';meta.innerHTML=`<span class="pill">Duration: ${data.duration}s</span><span class="pill">Scenes: ${data.scenes}</span><span class="pill">Quality: ${data.quality}</span>`;}catch(err){clearInterval(timer);bar.style.width='0%';statusEl.textContent='Error: '+err.message;preview.innerHTML='<div class="placeholder">Video generation failed. Please check file type and try again.</div>';}finally{btn.disabled=false;}});
+</script>
+</body>
+</html>
